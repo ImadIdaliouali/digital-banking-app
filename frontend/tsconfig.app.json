@@ -4,6 +4,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
+<<<<<<< HEAD
     "types": [
       "node"
     ]
@@ -12,6 +13,12 @@
     "src/main.ts",
     "src/main.server.ts",
     "src/server.ts"
+=======
+    "types": []
+  },
+  "files": [
+    "src/main.ts"
+>>>>>>> ed4c302 (chore(frontend): initialize Angular application)
   ],
   "include": [
     "src/**/*.d.ts"

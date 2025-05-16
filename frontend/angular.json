@@ -29,12 +29,16 @@
             "styles": [
               "src/styles.css"
             ],
+<<<<<<< HEAD
             "scripts": [],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {
               "entry": "src/server.ts"
             }
+=======
+            "scripts": []
+>>>>>>> ed4c302 (chore(frontend): initialize Angular application)
           },
           "configurations": {
             "production": {
@@ -99,6 +103,10 @@
     }
   },
   "cli": {
+<<<<<<< HEAD
     "analytics": "b94c406f-d212-4a48-aa28-80461df59360"
+=======
+    "analytics": "24859f20-9d17-4481-b9c4-8d73cf0614bd"
+>>>>>>> ed4c302 (chore(frontend): initialize Angular application)
   }
 }
