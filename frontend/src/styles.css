@@ -1,1 +1,260 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
+/* Global Styles */
+body {
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Better focus styles */
+:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.25);
+}
+
+/* Improved buttons */
+.btn {
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #3f51b5;
+  border-color: #3f51b5;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #303f9f;
+  border-color: #303f9f;
+}
+
+.btn-success {
+  background-color: #4caf50;
+  border-color: #4caf50;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+  background-color: #43a047;
+  border-color: #43a047;
+}
+
+.btn-info {
+  background-color: #03a9f4;
+  border-color: #03a9f4;
+  color: white;
+}
+
+.btn-info:hover,
+.btn-info:focus {
+  background-color: #039be5;
+  border-color: #039be5;
+  color: white;
+}
+
+/* Form styling */
+.form-control {
+  border-radius: 5px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ced4da;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #3f51b5;
+  box-shadow: 0 0 0 0.2rem rgba(63, 81, 181, 0.25);
+}
+
+.input-group-text {
+  background-color: #f8f9fa;
+  border-color: #ced4da;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Card enhancements */
+.card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card-header {
+  border-bottom: none;
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.shadow-sm {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Animations for page transitions */
+.container {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Badge styling */
+.badge {
+  padding: 0.5em 0.8em;
+  font-weight: 500;
+  border-radius: 4px;
+}
+
+.bg-success {
+  background-color: #4caf50 !important;
+}
+
+.bg-danger {
+  background-color: #f44336 !important;
+}
+
+.bg-warning {
+  background-color: #ff9800 !important;
+}
+
+/* Text utilities */
+.text-primary {
+  color: #3f51b5 !important;
+}
+
+.text-success {
+  color: #4caf50 !important;
+}
+
+.text-danger {
+  color: #f44336 !important;
+}
+
+/* Loading Animations */
+.loading-spinner {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 0.25em solid rgba(0, 123, 255, 0.3);
+  border-right-color: #007bff;
+  border-radius: 50%;
+  animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Navbar styling */
+.navbar {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: #007bff;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: #495057;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: #007bff;
+}
+
+.nav-link.active {
+  color: #007bff;
+  font-weight: 600;
+}
+
+/* Alert messages */
+.alert {
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+  color: #856404;
+}
+
+.alert-info {
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+  color: #0c5460;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .card {
+    margin-bottom: 15px;
+  }
+}

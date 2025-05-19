@@ -1,0 +1,82 @@
+<div class="container mt-2">
+  <div class="card">
+    <div class="card-header">Account Operations</div>
+    <div class="card-body">
+      <form [formGroup]="operationFormGroup" (ngSubmit)="handleSubmitOperation()">
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Account ID:</label>
+            <input type="text" formControlName="accountId" class="form-control" (blur)="handleGetOperationsByAccountId()">
+            <span class="text-danger" *ngIf="operationFormGroup.controls['accountId'].touched && operationFormGroup.controls['accountId'].errors">
+              Account ID is Required
+            </span>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Amount:</label>
+            <input type="number" formControlName="amount" class="form-control">
+            <span class="text-danger" *ngIf="operationFormGroup.controls['amount'].touched && operationFormGroup.controls['amount'].errors">
+              Amount must be greater than 0
+            </span>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Operation Type:</label>
+            <select formControlName="operationType" class="form-select">
+              <option value="CREDIT">CREDIT</option>
+              <option value="DEBIT">DEBIT</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description:</label>
+          <input type="text" formControlName="description" class="form-control">
+        </div>
+        <button [disabled]="!operationFormGroup.valid" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <ng-container *ngIf="operations | async as listOperations; else failureOrLoading">
+    <div class="card mt-3">
+      <div class="card-header">Operations List</div>
+      <div class="card-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Type</th>
+              <th>Account ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let op of listOperations">
+              <td>{{op.id}}</td>
+              <td>{{op.date | date:'medium'}}</td>
+              <td [ngClass]="{'text-danger': op.type === 'DEBIT', 'text-success': op.type === 'CREDIT'}">
+                {{op.amount}}
+              </td>
+              <td>{{op.type}}</td>
+              <td>{{op.bankAccountId}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #failureOrLoading>
+    <ng-container *ngIf="errorMessage; else loading">
+      <div class="alert alert-danger mt-3">
+        {{errorMessage}}
+      </div>
+    </ng-container>
+    <ng-template #loading>
+      <div class="d-flex justify-content-center mt-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+</div>

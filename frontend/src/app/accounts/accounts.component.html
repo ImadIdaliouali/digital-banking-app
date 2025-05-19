@@ -1,0 +1,203 @@
+<div class="container mt-2">
+  <!-- Add debugging information at the top -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!accountDetails && !errorMessage" class="d-flex justify-content-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card">
+        <div class="card-header">Accounts</div>
+        <div class="card-body">
+          <form [formGroup]="accountFormGroup" (ngSubmit)="handleSearchAccount()">
+            <div class="input-group">
+              <label class="input-group-text">Account Id :</label>
+              <input type="text" formControlName="accountId" class="form-control">
+              <button class="btn btn-info">
+                <i class="bi bi-search"></i>
+                Search
+              </button>
+            </div>
+          </form>
+          <ng-template #errorTemplate>
+            <ng-container *ngIf="errorMessage ; else loading">
+              <div class="text-danger">{{errorMessage}}</div>
+            </ng-container>
+            <ng-template #loading>
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </ng-template>
+          </ng-template>
+          <ng-container *ngIf="accountObservable | async as accountDetails">
+            <div class="card mb-3 shadow-sm border-0">
+              <div class="card-header bg-gradient text-white" style="background-color: #3f51b5;">
+                <i class="bi bi-bank me-2"></i> Account Information
+              </div>
+              <div class="card-body bg-light">
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <div class="p-3 border rounded bg-white shadow-sm">
+                      <label class="fw-bold text-secondary small mb-1 d-block">Account ID</label>
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-credit-card text-primary me-2"></i>
+                        <span class="fs-5">{{accountDetails.id}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="p-3 border rounded bg-white shadow-sm">
+                      <label class="fw-bold text-secondary small mb-1 d-block">Balance</label>
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-cash-stack text-success me-2"></i>
+                        <span class="fs-5 fw-bold text-success">{{accountDetails.balance | number : '1.2-2'}} $</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <div class="p-3 border rounded bg-white shadow-sm">
+                      <label class="fw-bold text-secondary small mb-1 d-block">Account Type</label>
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-bank text-info me-2"></i>
+                        <span class="fs-5">{{accountDetails.type}}</span>
+
+                        <!-- Show specific account type details -->
+                        <span *ngIf="accountDetails.type === 'CurrentAccount'" class="ms-2 badge bg-primary">
+                          Overdraft: {{accountDetails.overDraft | number : '1.2-2'}}
+                        </span>
+                        <span *ngIf="accountDetails.type === 'SavingAccount'" class="ms-2 badge bg-info">
+                          Interest Rate: {{accountDetails.interestRate}}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="p-3 border rounded bg-white shadow-sm">
+                      <label class="fw-bold text-secondary small mb-1 d-block">Creation Date</label>
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-calendar-date text-secondary me-2"></i>
+                        <span class="fs-5">{{accountDetails.createdAt | date:'medium'}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Customer details card -->
+                <div class="card border-0 shadow-sm mb-3" *ngIf="accountDetails.customerDTO">
+                  <div class="card-header bg-light text-dark py-2">
+                    <i class="bi bi-person me-2"></i> Customer Details
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar-circle me-3 bg-primary text-white">
+                            {{accountDetails.customerDTO.name?.charAt(0) || 'U'}}
+                          </div>
+                          <div>
+                            <label class="fw-bold text-secondary small mb-1 d-block">Customer Name</label>
+                            <span>{{accountDetails.customerDTO.name || 'N/A'}}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                          <i class="bi bi-envelope text-secondary fs-5 me-3"></i>
+                          <div>
+                            <label class="fw-bold text-secondary small mb-1 d-block">Customer Email</label>
+                            <span>{{accountDetails.customerDTO.email || 'N/A'}}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h5 class="text-primary mb-3">Operations History</h5>
+            <table class="table table-striped table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let op of accountDetails.accountOperationDTOS">
+                  <td>{{op.id}}</td>
+                  <td><span class="date-badge">{{op.date | date : 'dd-MM-yyyy HH:mm:ss'}}</span></td>
+                  <td>
+                    <span class="badge" [ngClass]="{
+                      'bg-danger': op.type == 'DEBIT',
+                      'bg-success': op.type == 'CREDIT',
+                      'bg-warning': op.type == 'TRANSFER'
+                    }">
+                      {{op.type}}
+                    </span>
+                  </td>
+                  <td class="text-end">{{op.amount | number : '1.2-2'}} $</td>
+                </tr>
+              </tbody>
+            </table>
+            <ul class="nav nav-pills">
+              <li *ngFor="let item of [].constructor(accountDetails.totalPages);let page=index">
+                <a [ngClass]="page==currentPage?'btn-info':'btn-outline-info'" (click)="gotoPage(page)"
+                  class="btn  ms-1 mt-1">{{page}}</a>
+              </li>
+            </ul>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="col col-md-6">
+      <div class="card" *ngIf="accountObservable">
+        <div class="card-header">Operations</div>
+        <div class="card-body">
+
+          <form [formGroup]="operationFormGroup" (ngSubmit)="handleAccountOperation()" method="post">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" formControlName="operationType" value="DEBIT">
+              <label class="form-check-label">DEBIT:</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" formControlName="operationType" value="CREDIT">
+              <label class="form-check-label">CREDIT:</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" formControlName="operationType" value="TRANSFER">
+              <label class="form-check-label">TRANSFER:</label>
+            </div>
+            <div class="mb-3" *ngIf="operationFormGroup.value.operationType=='TRANSFER'">
+              <label class="form-label">Account Destination :</label>
+              <input type="text" formControlName="accountDestination" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Amount :</label>
+              <input type="text" formControlName="amount" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description :</label>
+              <input type="text" formControlName="description" class="form-control">
+            </div>
+            <div class="d-grid mb-3">
+              <button class="btn btn-success">Save Operation</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
