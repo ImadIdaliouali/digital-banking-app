@@ -1,0 +1,176 @@
+<div class="user-dashboard-container">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="display-6 fw-bold text-primary">
+        <i class="bi bi-person-circle me-3"></i>My Banking Dashboard
+      </h1>
+      <p class="lead text-muted" *ngIf="currentUser">
+        Welcome back, {{ currentUser.username }}!
+      </p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading your account information...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="alert alert-danger" *ngIf="error">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading">
+    <!-- Account Summary -->
+    <div class="row mb-4">
+      <div class="col-md-4 mb-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+          <div class="card-body text-center">
+            <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded-circle mx-auto mb-3">
+              <i class="bi bi-bank"></i>
+            </div>
+            <h3 class="fw-bold text-primary">{{ userAccounts.length }}</h3>
+            <p class="text-muted mb-0">My Accounts</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-8 mb-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+          <div class="card-body text-center">
+            <div class="stat-icon bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-3">
+              <i class="bi bi-currency-dollar"></i>
+            </div>
+            <h3 class="fw-bold text-success">{{ formatCurrency(totalBalance) }}</h3>
+            <p class="text-muted mb-0">Total Balance</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-bottom">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-lightning-fill text-warning me-2"></i>Quick Actions
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4 col-sm-6 mb-3">
+                <a routerLink="/user-operations"
+                  class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3">
+                  <i class="bi bi-arrow-left-right mb-2" style="font-size: 1.5rem;"></i>
+                  <span>Transfer Money</span>
+                </a>
+              </div>
+              <div class="col-md-4 col-sm-6 mb-3">
+                <a routerLink="/user-accounts"
+                  class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3">
+                  <i class="bi bi-list-ul mb-2" style="font-size: 1.5rem;"></i>
+                  <span>Account History</span>
+                </a>
+              </div>
+              <div class="col-md-4 col-sm-6 mb-3">
+                <a routerLink="/user-profile"
+                  class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3">
+                  <i class="bi bi-person-gear mb-2" style="font-size: 1.5rem;"></i>
+                  <span>My Profile</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Accounts -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-bottom">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-bank text-primary me-2"></i>My Accounts
+            </h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="userAccounts.length === 0" class="text-center py-5">
+              <i class="bi bi-inbox display-4 text-muted mb-3"></i>
+              <h5 class="text-muted">No accounts found</h5>
+              <p class="text-muted">Contact your bank to set up your first account</p>
+            </div>
+
+            <div class="row" *ngIf="userAccounts.length > 0">
+              <div *ngFor="let account of userAccounts" class="col-md-6 col-lg-4 mb-4">
+                <div class="card account-card border-0 shadow-sm h-100">
+                  <div class="card-header bg-white border-bottom-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="d-flex align-items-center">
+                        <div [class]="'account-icon me-3 ' + getAccountTypeClass(account)">
+                          <i [class]="getAccountTypeIcon(account)"></i>
+                        </div>
+                        <div>
+                          <h6 class="mb-0">{{ getAccountTypeName(account) }}</h6>
+                          <small class="text-muted">{{ account.id }}</small>
+                        </div>
+                      </div>
+                      <span [class]="'badge ' + getStatusBadgeClass(account.status)">
+                        {{ account.status }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="card-body">
+                    <!-- Balance -->
+                    <div class="text-center mb-3">
+                      <h3 class="fw-bold text-success mb-0">{{ formatCurrency(account.balance) }}</h3>
+                      <small class="text-muted">Available Balance</small>
+                    </div>
+
+                    <!-- Account Details -->
+                    <div class="account-details">
+                      <div class="row text-center">
+                        <div class="col-6">
+                          <small class="text-muted d-block">Created</small>
+                          <span class="fw-semibold">{{ account.createdAt | date:'shortDate' }}</span>
+                        </div>
+                        <div class="col-6" *ngIf="isCurrentAccount(account)">
+                          <small class="text-muted d-block">Overdraft</small>
+                          <span class="fw-semibold">{{ getOverdraftAmount(account) }}</span>
+                        </div>
+                        <div class="col-6" *ngIf="!isCurrentAccount(account)">
+                          <small class="text-muted d-block">Interest Rate</small>
+                          <span class="fw-semibold">{{ getInterestRate(account) }}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card-footer bg-white border-top">
+                    <div class="d-grid gap-2">
+                      <a [routerLink]="['/user-operations']" [queryParams]="{accountId: account.id}"
+                        class="btn btn-sm btn-primary">
+                        <i class="bi bi-arrow-left-right me-1"></i>Transfer Money
+                      </a>
+                      <a [routerLink]="['/user-accounts', account.id, 'history']"
+                        class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-list-ul me-1"></i>View History
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

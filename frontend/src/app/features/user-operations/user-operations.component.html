@@ -1,0 +1,161 @@
+<div class="user-operations-container">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a routerLink="/user-dashboard" class="text-decoration-none">
+              <i class="bi bi-house me-1"></i>My Dashboard
+            </a>
+          </li>
+          <li class="breadcrumb-item active">Transfer Money</li>
+        </ol>
+      </nav>
+      
+      <h1 class="display-6 fw-bold text-primary">
+        <i class="bi bi-arrow-left-right me-3"></i>Transfer Money
+      </h1>
+      <p class="lead text-muted">Transfer money between your accounts or to other accounts</p>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="alert alert-danger" *ngIf="error">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+  </div>
+  
+  <div class="alert alert-success" *ngIf="success">
+    <i class="bi bi-check-circle me-2"></i>{{ success }}
+  </div>
+
+  <!-- Transfer Form -->
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <div class="text-center">
+            <div class="operation-icon bg-primary bg-opacity-10 text-primary rounded-circle mx-auto mb-3">
+              <i class="bi bi-arrow-left-right"></i>
+            </div>
+            <h4 class="text-primary">Money Transfer</h4>
+            <p class="text-muted mb-0">Transfer funds securely between accounts</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <form [formGroup]="transferForm" (ngSubmit)="onTransfer()">
+            <!-- From Account -->
+            <div class="mb-3">
+              <label for="sourceAccount" class="form-label">
+                <i class="bi bi-bank me-1"></i>From Account (Your Accounts Only)
+              </label>
+              <select 
+                class="form-select" 
+                id="sourceAccount"
+                formControlName="accountSource"
+                [class.is-invalid]="transferForm.get('accountSource')?.invalid && transferForm.get('accountSource')?.touched">
+                <option value="">Choose your account...</option>
+                <option *ngFor="let account of userAccounts" [value]="account.id">
+                  {{ getAccountDisplay(account) }}
+                </option>
+              </select>
+              <div class="form-text">You can only transfer from your own accounts</div>
+            </div>
+
+            <!-- To Account -->
+            <div class="mb-3">
+              <label for="destinationAccount" class="form-label">
+                <i class="bi bi-bank2 me-1"></i>To Account
+              </label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="destinationAccount"
+                formControlName="accountDestination"
+                [class.is-invalid]="transferForm.get('accountDestination')?.invalid && transferForm.get('accountDestination')?.touched"
+                placeholder="Enter destination account ID">
+              <div class="form-text">Enter the account ID you want to transfer to</div>
+            </div>
+
+            <!-- Amount -->
+            <div class="mb-3">
+              <label for="transferAmount" class="form-label">
+                <i class="bi bi-currency-dollar me-1"></i>Amount
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  id="transferAmount"
+                  formControlName="amount"
+                  [class.is-invalid]="transferForm.get('amount')?.invalid && transferForm.get('amount')?.touched"
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0.01">
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+              <label for="transferDescription" class="form-label">
+                <i class="bi bi-chat-text me-1"></i>Description (Optional)
+              </label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="transferDescription"
+                formControlName="description"
+                placeholder="Enter transfer description">
+            </div>
+
+            <!-- Transfer Summary -->
+            <div class="transfer-summary bg-light rounded p-3 mb-4" *ngIf="transferForm.get('accountSource')?.value && transferForm.get('amount')?.value">
+              <h6 class="fw-bold mb-2">
+                <i class="bi bi-info-circle me-2"></i>Transfer Summary
+              </h6>
+              <div class="row">
+                <div class="col-6">
+                  <small class="text-muted d-block">From</small>
+                  <span class="fw-semibold">{{ transferForm.get('accountSource')?.value }}</span>
+                </div>
+                <div class="col-6">
+                  <small class="text-muted d-block">Amount</small>
+                  <span class="fw-semibold text-primary">${{ transferForm.get('amount')?.value || '0.00' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid">
+              <button 
+                type="submit" 
+                class="btn btn-primary btn-lg"
+                [disabled]="transferForm.invalid || loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!loading" class="bi bi-arrow-left-right me-2"></i>
+                {{ loading ? 'Processing Transfer...' : 'Transfer Money' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Security Notice -->
+      <div class="card border-0 bg-light mt-4">
+        <div class="card-body">
+          <h6 class="card-title">
+            <i class="bi bi-shield-check me-2 text-success"></i>Security Notice
+          </h6>
+          <ul class="mb-0 small text-muted">
+            <li>You can only transfer from accounts that belong to you</li>
+            <li>All transfers are encrypted and secure</li>
+            <li>You will receive a confirmation once the transfer is complete</li>
+            <li>Transfers are processed immediately</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
