@@ -110,8 +110,6 @@ The application now includes comprehensive JWT-based authentication with role-ba
 - **Admin Users**: Full dashboard, customer management, all accounts, system operations
 - **Regular Users**: Personal dashboard, own accounts only, limited transfers
 
-**📋 RBAC Details**: See [RBAC_IMPLEMENTATION_GUIDE.md](RBAC_IMPLEMENTATION_GUIDE.md) for comprehensive documentation.
-
 ### Default Credentials
 
 The application comes with pre-configured users:
@@ -131,9 +129,26 @@ The application comes with pre-configured users:
 Once the backend is running, access the Swagger UI at:
 `http://localhost:8085/swagger-ui.html`
 
-**🔐 For Swagger Authentication**: See [SWAGGER_AUTHENTICATION.md](SWAGGER_AUTHENTICATION.md) for detailed instructions on how to authenticate and test protected endpoints in Swagger UI.
+### 🔐 Swagger Authentication
 
-**🔧 Swagger UI Issues**: If you encounter 404 errors with Swagger UI, see [SWAGGER_UI_FIX_GUIDE.md](SWAGGER_UI_FIX_GUIDE.md) for troubleshooting steps.
+To test protected endpoints in Swagger UI:
+
+1. **Get JWT Token**: Use the `POST /api/auth/signin` endpoint with credentials:
+
+   ```json
+   {
+     "username": "admin",
+     "password": "admin123"
+   }
+   ```
+
+2. **Authorize**: Click the "Authorize" button (🔒) in Swagger UI and enter:
+
+   ```
+   Bearer <your-jwt-token>
+   ```
+
+3. **Test Endpoints**: All protected endpoints will now include the JWT token automatically.
 
 ### Key API Endpoints
 
@@ -237,19 +252,49 @@ export const environment = {
    - **Admin**: Username: `admin`, Password: `admin123` (Full access)
    - **User**: Username: `user`, Password: `user123` (Limited access)
 
-## 🛠️ Development
+## 🧪 Testing Role-Based Access Control
+
+### **Admin User Testing**
+
+1. Login with `admin` / `admin123`
+2. **Expected Behavior**:
+   - Redirected to `/dashboard` (Admin Dashboard)
+   - Navigation shows: "Admin Dashboard", "Customers", "All Accounts", "Operations"
+   - Can access all customer data and system features
+   - User info displays "Administrator" role
+
+### **Regular User Testing**
+
+1. Login with `user` / `user123`
+2. **Expected Behavior**:
+   - Redirected to `/user-dashboard` (Personal Dashboard)
+   - Navigation shows: "My Dashboard", "My Accounts", "Transfer Money", "My Profile"
+   - Can only see personal account information
+   - Cannot access admin routes (automatically redirected)
+   - User info displays "User" role
+
+### **Route Protection Testing**
+
+- As a regular user, try accessing admin URLs directly:
+  - `/dashboard` → Should redirect to `/user-dashboard`
+  - `/customers` → Should redirect to `/user-dashboard`
+  - `/accounts` → Should redirect to `/user-dashboard`
+
+## �🛠️ Development
 
 ### Backend Development
 
 - The backend uses Spring Boot with auto-reload enabled
 - API documentation is available via Swagger
 - Database schema is auto-generated via Hibernate
+- JWT authentication with role-based access control
 
 ### Frontend Development
 
 - Angular CLI provides hot reload during development
 - Bootstrap components are used for consistent styling
 - Services handle API communication with error handling
+- Standalone component architecture for better performance
 
 ## 📱 Application Structure
 
