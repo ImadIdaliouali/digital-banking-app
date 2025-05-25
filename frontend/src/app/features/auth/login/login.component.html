@@ -1,0 +1,87 @@
+<div class="login-container">
+  <div class="container-fluid vh-100">
+    <div class="row h-100">
+      <!-- Left side - Branding -->
+      <div class="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-primary text-white">
+        <div class="text-center">
+          <i class="bi bi-bank2 display-1 mb-4"></i>
+          <h1 class="display-4 fw-bold">Digital Banking</h1>
+          <p class="lead">Secure, Fast, and Reliable Banking Solutions</p>
+        </div>
+      </div>
+
+      <!-- Right side - Login Form -->
+      <div class="col-md-6 d-flex align-items-center justify-content-center">
+        <div class="login-form w-100" style="max-width: 400px;">
+          <div class="text-center mb-4">
+            <i class="bi bi-bank2 text-primary" style="font-size: 3rem;"></i>
+            <h2 class="mt-3">Welcome Back</h2>
+            <p class="text-muted">Sign in to your account</p>
+          </div>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-person"></i>
+                </span>
+                <input type="text" class="form-control" id="username" formControlName="username"
+                  [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+                  placeholder="Enter your username">
+              </div>
+              <div class="invalid-feedback"
+                *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+                <small *ngIf="loginForm.get('username')?.errors?.['required']">Username is required</small>
+                <small *ngIf="loginForm.get('username')?.errors?.['minlength']">Username must be at least 3
+                  characters</small>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-lock"></i>
+                </span>
+                <input type="password" class="form-control" id="password" formControlName="password"
+                  [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                  placeholder="Enter your password">
+              </div>
+              <div class="invalid-feedback"
+                *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                <small *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</small>
+                <small *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6
+                  characters</small>
+              </div>
+            </div>
+
+            <div class="alert alert-danger" *ngIf="error">
+              <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg" [disabled]="loginForm.invalid || loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!loading" class="bi bi-box-arrow-in-right me-2"></i>
+                {{ loading ? 'Signing In...' : 'Sign In' }}
+              </button>
+            </div>
+          </form>
+
+          <div class="text-center mt-4">
+            <div class="alert alert-info">
+              <h6 class="alert-heading">Demo Credentials</h6>
+              <p class="mb-1"><strong>Admin:</strong> admin / admin123</p>
+              <p class="mb-0"><strong>User:</strong> user / user123</p>
+            </div>
+            <small class="text-muted">
+              Don't have an account?
+              <a href="#" class="text-decoration-none">Contact your bank</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
