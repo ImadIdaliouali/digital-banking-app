@@ -1,0 +1,277 @@
+<div class="operations-container">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="display-6 fw-bold text-primary">
+        <i class="bi bi-arrow-left-right me-3"></i>Banking Operations
+      </h1>
+      <p class="lead text-muted">Perform credit, debit, and transfer operations</p>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="alert alert-danger" *ngIf="error">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+  </div>
+  
+  <div class="alert alert-success" *ngIf="success">
+    <i class="bi bi-check-circle me-2"></i>{{ success }}
+  </div>
+
+  <!-- Operation Tabs -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-bottom">
+      <ul class="nav nav-tabs card-header-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button 
+            class="nav-link"
+            [class.active]="activeTab === 'credit'"
+            (click)="setActiveTab('credit')"
+            type="button">
+            <i class="bi bi-plus-circle me-2"></i>Credit
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button 
+            class="nav-link"
+            [class.active]="activeTab === 'debit'"
+            (click)="setActiveTab('debit')"
+            type="button">
+            <i class="bi bi-dash-circle me-2"></i>Debit
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button 
+            class="nav-link"
+            [class.active]="activeTab === 'transfer'"
+            (click)="setActiveTab('transfer')"
+            type="button">
+            <i class="bi bi-arrow-left-right me-2"></i>Transfer
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-body">
+      <!-- Credit Tab -->
+      <div *ngIf="activeTab === 'credit'" class="tab-content">
+        <div class="row justify-content-center">
+          <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+              <div class="operation-icon bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-3">
+                <i class="bi bi-plus-circle"></i>
+              </div>
+              <h4 class="text-success">Credit Account</h4>
+              <p class="text-muted">Add money to an account</p>
+            </div>
+
+            <form [formGroup]="creditForm" (ngSubmit)="onCredit()">
+              <div class="mb-3">
+                <label for="creditAccount" class="form-label">Select Account</label>
+                <select 
+                  class="form-select" 
+                  id="creditAccount"
+                  formControlName="accountId"
+                  [class.is-invalid]="creditForm.get('accountId')?.invalid && creditForm.get('accountId')?.touched">
+                  <option value="">Choose an account...</option>
+                  <option *ngFor="let account of accounts" [value]="account.id">
+                    {{ getAccountDisplay(account) }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="creditAmount" class="form-label">Amount</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input 
+                    type="number" 
+                    class="form-control" 
+                    id="creditAmount"
+                    formControlName="amount"
+                    [class.is-invalid]="creditForm.get('amount')?.invalid && creditForm.get('amount')?.touched"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0.01">
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="creditDescription" class="form-label">Description</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="creditDescription"
+                  formControlName="description"
+                  [class.is-invalid]="creditForm.get('description')?.invalid && creditForm.get('description')?.touched"
+                  placeholder="Enter transaction description">
+              </div>
+
+              <div class="d-grid">
+                <button 
+                  type="submit" 
+                  class="btn btn-success btn-lg"
+                  [disabled]="creditForm.invalid || loading">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                  <i *ngIf="!loading" class="bi bi-plus-circle me-2"></i>
+                  {{ loading ? 'Processing...' : 'Credit Account' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debit Tab -->
+      <div *ngIf="activeTab === 'debit'" class="tab-content">
+        <div class="row justify-content-center">
+          <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+              <div class="operation-icon bg-warning bg-opacity-10 text-warning rounded-circle mx-auto mb-3">
+                <i class="bi bi-dash-circle"></i>
+              </div>
+              <h4 class="text-warning">Debit Account</h4>
+              <p class="text-muted">Withdraw money from an account</p>
+            </div>
+
+            <form [formGroup]="debitForm" (ngSubmit)="onDebit()">
+              <div class="mb-3">
+                <label for="debitAccount" class="form-label">Select Account</label>
+                <select 
+                  class="form-select" 
+                  id="debitAccount"
+                  formControlName="accountId"
+                  [class.is-invalid]="debitForm.get('accountId')?.invalid && debitForm.get('accountId')?.touched">
+                  <option value="">Choose an account...</option>
+                  <option *ngFor="let account of accounts" [value]="account.id">
+                    {{ getAccountDisplay(account) }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="debitAmount" class="form-label">Amount</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input 
+                    type="number" 
+                    class="form-control" 
+                    id="debitAmount"
+                    formControlName="amount"
+                    [class.is-invalid]="debitForm.get('amount')?.invalid && debitForm.get('amount')?.touched"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0.01">
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="debitDescription" class="form-label">Description</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="debitDescription"
+                  formControlName="description"
+                  [class.is-invalid]="debitForm.get('description')?.invalid && debitForm.get('description')?.touched"
+                  placeholder="Enter transaction description">
+              </div>
+
+              <div class="d-grid">
+                <button 
+                  type="submit" 
+                  class="btn btn-warning btn-lg"
+                  [disabled]="debitForm.invalid || loading">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                  <i *ngIf="!loading" class="bi bi-dash-circle me-2"></i>
+                  {{ loading ? 'Processing...' : 'Debit Account' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transfer Tab -->
+      <div *ngIf="activeTab === 'transfer'" class="tab-content">
+        <div class="row justify-content-center">
+          <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+              <div class="operation-icon bg-primary bg-opacity-10 text-primary rounded-circle mx-auto mb-3">
+                <i class="bi bi-arrow-left-right"></i>
+              </div>
+              <h4 class="text-primary">Transfer Money</h4>
+              <p class="text-muted">Transfer money between accounts</p>
+            </div>
+
+            <form [formGroup]="transferForm" (ngSubmit)="onTransfer()">
+              <div class="mb-3">
+                <label for="sourceAccount" class="form-label">From Account</label>
+                <select 
+                  class="form-select" 
+                  id="sourceAccount"
+                  formControlName="accountSource"
+                  [class.is-invalid]="transferForm.get('accountSource')?.invalid && transferForm.get('accountSource')?.touched">
+                  <option value="">Choose source account...</option>
+                  <option *ngFor="let account of accounts" [value]="account.id">
+                    {{ getAccountDisplay(account) }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="destinationAccount" class="form-label">To Account</label>
+                <select 
+                  class="form-select" 
+                  id="destinationAccount"
+                  formControlName="accountDestination"
+                  [class.is-invalid]="transferForm.get('accountDestination')?.invalid && transferForm.get('accountDestination')?.touched">
+                  <option value="">Choose destination account...</option>
+                  <option *ngFor="let account of accounts" [value]="account.id">
+                    {{ getAccountDisplay(account) }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="transferAmount" class="form-label">Amount</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input 
+                    type="number" 
+                    class="form-control" 
+                    id="transferAmount"
+                    formControlName="amount"
+                    [class.is-invalid]="transferForm.get('amount')?.invalid && transferForm.get('amount')?.touched"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0.01">
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="transferDescription" class="form-label">Description (Optional)</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="transferDescription"
+                  formControlName="description"
+                  placeholder="Enter transfer description">
+              </div>
+
+              <div class="d-grid">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary btn-lg"
+                  [disabled]="transferForm.invalid || loading">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                  <i *ngIf="!loading" class="bi bi-arrow-left-right me-2"></i>
+                  {{ loading ? 'Processing...' : 'Transfer Money' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

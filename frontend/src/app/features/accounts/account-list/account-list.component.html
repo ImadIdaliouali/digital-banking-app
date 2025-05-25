@@ -1,0 +1,124 @@
+<div class="account-list-container">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <h1 class="display-6 fw-bold text-primary">
+        <i class="bi bi-bank me-3"></i>Bank Accounts
+      </h1>
+      <p class="lead text-muted">Manage customer bank accounts</p>
+    </div>
+    <div class="col-md-6 text-md-end">
+      <a routerLink="/accounts/new" class="btn btn-primary btn-lg">
+        <i class="bi bi-plus-circle me-2"></i>Create New Account
+      </a>
+    </div>
+  </div>
+
+  <!-- Error Alert -->
+  <div class="alert alert-danger" *ngIf="error">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading accounts...</p>
+  </div>
+
+  <!-- Accounts Grid -->
+  <div *ngIf="!loading" class="row">
+    <div *ngIf="accounts.length === 0" class="col-12">
+      <div class="text-center py-5">
+        <i class="bi bi-inbox display-4 text-muted mb-3"></i>
+        <h5 class="text-muted">No accounts found</h5>
+        <p class="text-muted">Start by creating your first bank account</p>
+        <a routerLink="/accounts/new" class="btn btn-primary">
+          <i class="bi bi-plus-circle me-2"></i>Create First Account
+        </a>
+      </div>
+    </div>
+
+    <div *ngFor="let account of accounts" class="col-md-6 col-lg-4 mb-4">
+      <div class="card account-card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-bottom-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <div [class]="'account-icon me-3 ' + getAccountTypeClass(account)">
+                <i [class]="getAccountTypeIcon(account)"></i>
+              </div>
+              <div>
+                <h6 class="mb-0">{{ getAccountTypeName(account) }}</h6>
+                <small class="text-muted">{{ account.id }}</small>
+              </div>
+            </div>
+            <span [class]="'badge ' + getStatusBadgeClass(account.status)">
+              {{ account.status }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <!-- Balance -->
+          <div class="text-center mb-3">
+            <h3 class="fw-bold text-success mb-0">{{ formatCurrency(account.balance) }}</h3>
+            <small class="text-muted">Current Balance</small>
+          </div>
+
+          <!-- Customer Info -->
+          <div class="mb-3">
+            <div class="d-flex align-items-center">
+              <div class="avatar bg-primary bg-opacity-10 text-primary rounded-circle me-3">
+                <i class="bi bi-person-fill"></i>
+              </div>
+              <div>
+                <h6 class="mb-0">{{ account.customerDTO.name }}</h6>
+                <small class="text-muted">{{ account.customerDTO.email }}</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Details -->
+          <div class="account-details">
+            <div class="row text-center">
+              <div class="col-6">
+                <small class="text-muted d-block">Created</small>
+                <span class="fw-semibold">{{ account.createdAt | date:'shortDate' }}</span>
+              </div>
+              <div class="col-6" *ngIf="isCurrentAccount(account)">
+                <small class="text-muted d-block">Overdraft</small>
+                <span class="fw-semibold">{{ formatCurrency(getCurrentAccount(account).overDraft) }}</span>
+              </div>
+              <div class="col-6" *ngIf="isSavingAccount(account)">
+                <small class="text-muted d-block">Interest Rate</small>
+                <span class="fw-semibold">{{ getSavingAccount(account).interestRate }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer bg-white border-top">
+          <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+            <a 
+              [routerLink]="['/accounts', account.id]" 
+              class="btn btn-sm btn-outline-info flex-fill">
+              <i class="bi bi-eye me-1"></i>View
+            </a>
+            <a 
+              [routerLink]="['/accounts', account.id, 'operations']" 
+              class="btn btn-sm btn-outline-primary flex-fill">
+              <i class="bi bi-list-ul me-1"></i>History
+            </a>
+            <a 
+              [routerLink]="['/operations']" 
+              [queryParams]="{accountId: account.id}"
+              class="btn btn-sm btn-outline-success flex-fill">
+              <i class="bi bi-arrow-left-right me-1"></i>Transfer
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

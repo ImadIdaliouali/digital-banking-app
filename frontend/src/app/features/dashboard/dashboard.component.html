@@ -1,0 +1,164 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="display-6 fw-bold text-primary">
+        <i class="bi bi-speedometer2 me-3"></i>Dashboard
+      </h1>
+      <p class="lead text-muted">Welcome to your Digital Banking Dashboard</p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading dashboard data...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading">
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+      <div class="col-md-4 mb-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+          <div class="card-body text-center">
+            <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded-circle mx-auto mb-3">
+              <i class="bi bi-people-fill"></i>
+            </div>
+            <h3 class="fw-bold text-primary">{{ totalCustomers }}</h3>
+            <p class="text-muted mb-0">Total Customers</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 mb-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+          <div class="card-body text-center">
+            <div class="stat-icon bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-3">
+              <i class="bi bi-bank"></i>
+            </div>
+            <h3 class="fw-bold text-success">{{ totalAccounts }}</h3>
+            <p class="text-muted mb-0">Total Accounts</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 mb-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+          <div class="card-body text-center">
+            <div class="stat-icon bg-warning bg-opacity-10 text-warning rounded-circle mx-auto mb-3">
+              <i class="bi bi-currency-dollar"></i>
+            </div>
+            <h3 class="fw-bold text-warning">{{ totalBalance | currency:'USD':'symbol':'1.2-2' }}</h3>
+            <p class="text-muted mb-0">Total Balance</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-bottom">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-lightning-fill text-warning me-2"></i>Quick Actions
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3 col-sm-6 mb-3">
+                <a routerLink="/customers" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3">
+                  <i class="bi bi-person-plus-fill mb-2" style="font-size: 1.5rem;"></i>
+                  <span>Manage Customers</span>
+                </a>
+              </div>
+              <div class="col-md-3 col-sm-6 mb-3">
+                <a routerLink="/accounts" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3">
+                  <i class="bi bi-bank2 mb-2" style="font-size: 1.5rem;"></i>
+                  <span>View Accounts</span>
+                </a>
+              </div>
+              <div class="col-md-3 col-sm-6 mb-3">
+                <a routerLink="/operations" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3">
+                  <i class="bi bi-arrow-left-right mb-2" style="font-size: 1.5rem;"></i>
+                  <span>Transactions</span>
+                </a>
+              </div>
+              <div class="col-md-3 col-sm-6 mb-3">
+                <a routerLink="/reports" class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3">
+                  <i class="bi bi-graph-up mb-2" style="font-size: 1.5rem;"></i>
+                  <span>Reports</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-white border-bottom">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-people text-primary me-2"></i>Recent Customers
+            </h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="customers.length === 0" class="text-center text-muted py-4">
+              <i class="bi bi-inbox display-4 mb-3"></i>
+              <p>No customers found</p>
+            </div>
+            <div *ngFor="let customer of customers.slice(0, 5)" class="d-flex align-items-center mb-3">
+              <div class="avatar bg-primary bg-opacity-10 text-primary rounded-circle me-3">
+                <i class="bi bi-person-fill"></i>
+              </div>
+              <div class="flex-grow-1">
+                <h6 class="mb-0">{{ customer.name }}</h6>
+                <small class="text-muted">{{ customer.email }}</small>
+              </div>
+            </div>
+            <div class="text-center mt-3" *ngIf="customers.length > 5">
+              <a routerLink="/customers" class="btn btn-sm btn-outline-primary">View All Customers</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-white border-bottom">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-bank text-success me-2"></i>Recent Accounts
+            </h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="accounts.length === 0" class="text-center text-muted py-4">
+              <i class="bi bi-inbox display-4 mb-3"></i>
+              <p>No accounts found</p>
+            </div>
+            <div *ngFor="let account of accounts.slice(0, 5)" class="d-flex align-items-center mb-3">
+              <div class="avatar bg-success bg-opacity-10 text-success rounded-circle me-3">
+                <i [class]="getAccountTypeIcon(account)"></i>
+              </div>
+              <div class="flex-grow-1">
+                <h6 class="mb-0">{{ account.id }}</h6>
+                <small class="text-muted">{{ getAccountTypeName(account) }}</small>
+              </div>
+              <div class="text-end">
+                <span class="fw-bold text-success">{{ account.balance | currency:'USD':'symbol':'1.2-2' }}</span>
+              </div>
+            </div>
+            <div class="text-center mt-3" *ngIf="accounts.length > 5">
+              <a routerLink="/accounts" class="btn btn-sm btn-outline-success">View All Accounts</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

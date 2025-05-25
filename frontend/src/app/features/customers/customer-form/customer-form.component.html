@@ -1,0 +1,126 @@
+<div class="customer-form-container">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a routerLink="/customers" class="text-decoration-none">
+              <i class="bi bi-people me-1"></i>Customers
+            </a>
+          </li>
+          <li class="breadcrumb-item active">
+            {{ isEditMode ? 'Edit Customer' : 'New Customer' }}
+          </li>
+        </ol>
+      </nav>
+      
+      <h1 class="display-6 fw-bold text-primary">
+        <i class="bi bi-person-plus me-3" *ngIf="!isEditMode"></i>
+        <i class="bi bi-pencil me-3" *ngIf="isEditMode"></i>
+        {{ isEditMode ? 'Edit Customer' : 'Add New Customer' }}
+      </h1>
+      <p class="lead text-muted">
+        {{ isEditMode ? 'Update customer information' : 'Enter customer details to create a new account' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading && isEditMode" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading customer data...</p>
+  </div>
+
+  <!-- Form -->
+  <div *ngIf="!loading || !isEditMode" class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-person-vcard me-2"></i>Customer Information
+          </h5>
+        </div>
+        <div class="card-body">
+          <!-- Error Alert -->
+          <div class="alert alert-danger" *ngIf="error">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+          </div>
+
+          <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+            <!-- Name Field -->
+            <div class="mb-3">
+              <label for="name" class="form-label">
+                <i class="bi bi-person me-1"></i>Full Name *
+              </label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="name"
+                formControlName="name"
+                [class.is-invalid]="customerForm.get('name')?.invalid && customerForm.get('name')?.touched"
+                placeholder="Enter customer's full name">
+              <div class="invalid-feedback" *ngIf="getFieldError('name')">
+                {{ getFieldError('name') }}
+              </div>
+            </div>
+
+            <!-- Email Field -->
+            <div class="mb-4">
+              <label for="email" class="form-label">
+                <i class="bi bi-envelope me-1"></i>Email Address *
+              </label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email"
+                formControlName="email"
+                [class.is-invalid]="customerForm.get('email')?.invalid && customerForm.get('email')?.touched"
+                placeholder="Enter customer's email address">
+              <div class="invalid-feedback" *ngIf="getFieldError('email')">
+                {{ getFieldError('email') }}
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary me-md-2"
+                (click)="onCancel()"
+                [disabled]="loading">
+                <i class="bi bi-x-circle me-2"></i>Cancel
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="customerForm.invalid || loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!loading && !isEditMode" class="bi bi-plus-circle me-2"></i>
+                <i *ngIf="!loading && isEditMode" class="bi bi-check-circle me-2"></i>
+                {{ loading ? 'Saving...' : (isEditMode ? 'Update Customer' : 'Create Customer') }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Form Help -->
+      <div class="card border-0 bg-light mt-4">
+        <div class="card-body">
+          <h6 class="card-title">
+            <i class="bi bi-info-circle me-2"></i>Information
+          </h6>
+          <ul class="mb-0 small text-muted">
+            <li>All fields marked with * are required</li>
+            <li>Email address must be unique and valid</li>
+            <li>Customer name should be at least 2 characters long</li>
+            <li *ngIf="!isEditMode">After creating a customer, you can create bank accounts for them</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
